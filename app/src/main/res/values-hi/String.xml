@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_text">प्लेज़ेलो में आपका स्वागत है</string>
+    <string name="language_label">भाषा चुनें</string>
+
+
+        <string name="app_name">प्लेज़ेलो</string>
+        <string name="view_more_options">अधिक विकल्प देखें</string>
+        <string name="view_less_options">कम विकल्प देखें</string>
+        <string name="opening_wallet">वॉलेट खोल रहे हैं...</string>
+        <string name="help_support">सहायता और समर्थन</string>
+        <string name="profile_page">प्रोफ़ाइल पृष्ठ</string>
+        <string name="wallet">वॉलेट</string>
+        <string name="gaming_tools">जिम्मेदार गेमिंग उपकरण</string>
+        <string name="game_option">गेम्स</string>
+        <string name="about_option">अबाउट</string>
+        <string name="logout_option">लॉग आउट</string>
+        <string name="cancel">रद्द करें</string>
+        <string name="logout">लॉग आउट</string>
+        <string name="language_english">English</string>
+        <string name="language_hindi">हिंदी</string>
+
+
+
+
+
+</resources>

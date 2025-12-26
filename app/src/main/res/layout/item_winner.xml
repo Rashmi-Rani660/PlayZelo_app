@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#739EC9"
+    android:padding="12dp"
+    android:layout_marginTop="4dp">
+
+    <!-- Rank -->
+    <TextView
+        android:id="@+id/txtRank"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="#1"
+        android:textColor="#FFD700"
+        android:textStyle="bold"
+        android:textSize="14sp" />
+
+    <!-- Name -->
+    <TextView
+        android:id="@+id/txtName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="Player Name"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
+
+    <!-- ID -->
+    <TextView
+        android:id="@+id/txtId"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="ID12345"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
+
+    <!-- Amount -->
+    <TextView
+        android:id="@+id/txtAmount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="₹500"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
+
+    <!-- Game -->
+    <TextView
+        android:id="@+id/txtGame"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="Teen Patti"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
+
+</LinearLayout>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#232a5c">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal"
+        android:layout_margin="20dp">
+
+        <!-- Title Text -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your UPI ID"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingBottom="10dp" />
+
+        <!-- Instruction Text -->
+        <TextView
+            android:id="@+id/instruction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enter a valid UPI ID"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:paddingBottom="20dp" />
+
+        <!-- UPI ID Input Field -->
+        <EditText
+            android:id="@+id/upi_id_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="e.g. 9876543210@upi"
+            android:inputType="textEmailAddress"
+            android:textColor="#000000"
+            android:textColorHint="#AAAAAA"
+            android:background="@drawable/edit_text_bg"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textSize="16sp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Instruction below input -->
+        <TextView
+            android:id="@+id/upi_instruction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="In PhonePe, the UPI ID is usually your number followed by @ybl"
+            android:textColor="#D0D0D0"
+            android:textSize="14sp"
+            android:paddingTop="10dp"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Proceed Button -->
+        <Button
+            android:id="@+id/proceed_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="PROCEED"
+            android:textColor="#FFFFFF"
+            android:background="#FFA500"
+            android:textSize="16sp"
+            android:layout_marginTop="20dp"
+            android:padding="10dp" />
+
+    </LinearLayout>
+</ScrollView>

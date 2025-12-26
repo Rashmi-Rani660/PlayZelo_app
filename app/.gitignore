@@ -1,0 +1,6 @@
+/build
+# Ignore APK files
+*.apk
+
+# Ignore release folder
+app/release/

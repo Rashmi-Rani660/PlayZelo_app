@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/channelContainer"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="10dp"
+    android:layout_margin="8dp"
+    android:background="@drawable/bg_unselected_channel">
+
+    <ImageView
+        android:id="@+id/ivChannel"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="channel" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="UPI"
+        android:textStyle="bold"
+        android:layout_marginTop="6dp"/>
+
+    <TextView
+        android:id="@+id/tvLimit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="₹100-50000"
+        android:textSize="12sp"
+        android:textColor="#666"/>
+</LinearLayout>

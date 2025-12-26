@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#2A003D"
+    android:padding="20dp">
+
+    <!-- ================= HEADER ================= -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🏆 PLAYZELO WINNER BOARD"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp"
+        android:paddingVertical="14dp"
+        android:background="#FF4DA6"
+        android:elevation="8dp"
+        android:letterSpacing="0.08"
+        android:layout_marginBottom="14dp" />
+
+    <!-- ================= LEADERBOARD CARD ================= -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="6dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="6dp"
+        app:cardUseCompatPadding="true"
+        app:cardBackgroundColor="#081A3A">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:clipToPadding="false">
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="LEADERBOARD"
+                android:textColor="#FF4DA6"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:paddingVertical="10dp"
+                android:letterSpacing="0.06" />
+
+            <!-- ================= TABLE HEADER ================= -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:background="#0F2557">
+
+                <TextView
+                    style="@style/HeaderCell"
+                    android:text="NO." />
+
+                <TextView
+                    style="@style/HeaderCell"
+                    android:layout_weight="2"
+                    android:text="PLAYER" />
+
+                <TextView
+                    style="@style/HeaderCell"
+                    android:text="GAME" />
+
+                <TextView
+                    style="@style/HeaderCell"
+                    android:text="EARNINGS" />
+
+                <TextView
+                    style="@style/HeaderCell"
+                    android:text="TIME" />
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#334155"
+                android:layout_marginBottom="4dp" />
+
+            <!-- ================= RECYCLER VIEW ================= -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerWinners"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:clipToPadding="false"
+                android:paddingBottom="6dp"
+                android:overScrollMode="never" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

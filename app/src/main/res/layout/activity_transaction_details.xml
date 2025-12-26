@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F8F8">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="@drawable/bg_white_rounded"
+            android:gravity="center"
+            android:layout_marginBottom="16dp">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_crown"
+                android:contentDescription="icon" />
+
+            <TextView
+                android:id="@+id/tvAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+₹5.1"
+                android:textSize="22sp"
+                android:textColor="#000000"
+                android:layout_marginTop="8dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Winnings"
+                android:textColor="#777777"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Transaction Details -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Transaction ID"
+            android:textColor="#999999"
+            android:textSize="13sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvTransactionId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="400004809249847"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Credited to Winnings"
+            android:textColor="#999999"
+            android:textSize="13sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvCredited"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+₹5.1"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rank"
+            android:textColor="#999999"
+            android:textSize="13sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvRank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EntryFee"
+            android:textColor="#999999"
+            android:textSize="13sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvEntryFee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="₹3"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tournament ID"
+            android:textColor="#999999"
+            android:textSize="13sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvTournamentId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="175402199782787"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Game Name"
+            android:textColor="#999999"
+            android:textSize="13sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvGameName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ludo Supreme"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textColor="#999999"
+            android:textSize="13sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Winnings for 2 PLAYERS • 1 WINNER"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date &amp; Time"
+            android:textColor="#999999"
+            android:textSize="13sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvDateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="01 Aug 2025, 10:02"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Contact Support"
+            android:textColor="#FFF"
+            android:background="@drawable/bg_outline_button"
+            android:layout_marginTop="24dp" />
+    </LinearLayout>
+</ScrollView>

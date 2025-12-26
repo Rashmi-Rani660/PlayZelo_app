@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.PlayZelo" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Status bar hatao -->
+        <item name="android:windowFullscreen">true</item>
+        <!-- Navigation bar bhi hide karna ho to optional -->
+    </style>
+
+    <style name="Theme.PlayZelo" parent="Base.Theme.PlayZelo" />
+</resources>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1E2554"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="start"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back"
+            android:tint="#FFFFFF" />
+
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="REGISTER NOW"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Card Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_white_card"
+            android:padding="20dp"
+            android:elevation="8dp">
+
+            <!-- Profile Image -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/imgProfile"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:scaleType="centerCrop"
+                    app:riv_oval="true"
+                    android:background="@drawable/background_image" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txtAddImage"
+                    android:layout_gravity="center"
+                    android:text="Add Image"
+                    android:textSize="11sp"
+                    android:textColor="#757575" />
+            </FrameLayout>
+
+            <!-- Username -->
+            <EditText
+                android:id="@+id/etUsername"
+                style="@style/InputStyle"
+                android:hint="Username"
+                android:drawableStart="@drawable/person" />
+
+            <!-- DOB -->
+            <EditText
+                android:id="@+id/etDob"
+                style="@style/InputStyle"
+                android:hint="Date of Birth"
+                android:focusable="false"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_calendar" />
+
+            <!-- Country -->
+            <Spinner
+                android:id="@+id/spCountry"
+                style="@style/InputStyle"
+                android:background="@drawable/background_input"
+                android:paddingStart="12dp" />
+
+            <!-- Address -->
+            <EditText
+                android:id="@+id/etAddress"
+                style="@style/InputStyle"
+                android:hint="Address"
+                android:drawableStart="@drawable/ic_location" />
+
+            <!-- City -->
+            <EditText
+                android:id="@+id/etCity"
+                style="@style/InputStyle"
+                android:hint="City"
+                android:drawableStart="@drawable/ic_location" />
+
+            <!-- Email -->
+            <EditText
+                android:id="@+id/etEmail"
+                style="@style/InputStyle"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:drawableStart="@drawable/baseline_email_24" />
+
+            <!-- Phone -->
+            <EditText
+                android:id="@+id/etPhone"
+                style="@style/InputStyle"
+                android:hint="Phone Number"
+                android:inputType="phone"
+                android:drawableStart="@drawable/ic_phone" />
+
+            <!-- Password -->
+            <EditText
+                android:id="@+id/etPassword"
+                style="@style/InputStyle"
+                android:hint="Password"
+                android:inputType="textPassword" />
+
+            <!-- Button -->
+            <Button
+                android:id="@+id/btnRegister"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:text="GET STARTED NOW"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#FF0059" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

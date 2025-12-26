@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/bg_rounded_card"
+    android:layout_marginTop="10dp"
+    android:padding="12dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/bootText"
+        android:text="BOOT ₹50 DAILY"
+        android:textColor="#232a5c"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/rewardText"
+        android:text="PLAY AND GET ₹750"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btnKnowMore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="KNOW MORE"
+        android:textAllCaps="false"
+        android:textColor="#000000"
+        android:backgroundTint="#8ABB6C"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>

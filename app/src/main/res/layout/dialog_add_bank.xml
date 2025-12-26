@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_round"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Bank Account"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="#1E1E1E"
+        android:paddingBottom="16dp"/>
+
+    <!-- Select Bank -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Bank"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:paddingBottom="4dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerBank"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_input"
+        android:paddingHorizontal="12dp"
+        android:spinnerMode="dropdown"/>
+
+    <!-- Account Holder Name -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Account Holder Name"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginTop="12dp"/>
+
+    <EditText
+        android:id="@+id/etHolderName"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Enter name"
+        android:background="@drawable/bg_input"
+        android:paddingHorizontal="12dp"
+        android:textColor="#000000"
+        android:textSize="15sp"/>
+
+    <!-- Account Number -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Account Number"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginTop="12dp"/>
+
+    <EditText
+        android:id="@+id/etAccountNumber"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Enter account number"
+        android:inputType="number"
+        android:background="@drawable/bg_input"
+        android:paddingHorizontal="12dp"
+        android:textColor="#000000"
+        android:textSize="15sp"/>
+
+    <!-- IFSC Code -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="IFSC Code"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginTop="12dp"/>
+
+    <EditText
+        android:id="@+id/etIfsc"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Enter IFSC code"
+        android:background="@drawable/bg_input"
+        android:paddingHorizontal="12dp"
+        android:textColor="#000000"
+        android:textSize="15sp"/>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textSize="14sp"
+            android:backgroundTint="#CCCCCC"
+            android:textColor="#000000"
+            android:minWidth="80dp"
+            android:paddingHorizontal="16dp"
+            android:background="@drawable/bg_btn_gray"/>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:textSize="14sp"
+            android:layout_marginStart="12dp"
+            android:textColor="#FFFFFF"
+            android:minWidth="100dp"
+            android:paddingHorizontal="16dp"
+            android:background="@drawable/bg_btn_primary"/>
+    </LinearLayout>
+</LinearLayout>

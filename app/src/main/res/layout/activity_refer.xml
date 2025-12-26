@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#232a5c"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- HEADER BAR -->
+    <RelativeLayout
+        android:id="@+id/headerBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#1c2551"
+        android:padding="10dp">
+
+        <!-- Back Button -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_back"
+            android:layout_alignParentStart="true"
+            android:contentDescription="Back"
+            android:tint="#FFFFFF" />
+
+        <!-- Page Title -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Refer &amp; Earn"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true" />
+
+        <!-- Info Button -->
+        <ImageButton
+            android:id="@+id/btnLeaderboard"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_leaderboard"
+            android:tint="#FFFFFF"
+            android:contentDescription="Leaderboard" />
+
+        <!-- History Button -->
+        <ImageButton
+            android:id="@+id/btnHistory"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_toStartOf="@id/btnLeaderboard"
+            android:layout_toLeftOf="@id/btnLeaderboard"
+            android:background="@android:color/transparent"
+            android:src="@drawable/transaction_history"
+            android:scaleType="centerInside"
+            android:contentDescription="History" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_below="@id/headerBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+            <!-- Leaderboards -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/leaderboard_banner" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+            <!-- Refer & Earn Card -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:background="@drawable/bg_refer_card"
+                android:elevation="8dp"
+                android:layout_marginBottom="20dp">
+
+                <TextView
+                    android:text="REFER &amp; GET"
+                    android:textColor="#FAFFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="₹50"
+                    android:textColor="#FFEB3B"
+                    android:textSize="36sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginTop="6dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="Per Install + 1 Gameplay"
+                    android:textColor="#DDDDDD"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:layout_marginTop="2dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/btnReferNow"
+                    android:text="REFER NOW &amp; EARN"
+                    android:layout_marginTop="12dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#00C853" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_marginTop="16dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_inner_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="ROOKIE STAR"
+                        android:textColor="#FFD700"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Total Referrals\n0"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:text="Total Earnings\n₹0"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Withdrawable Amount\n₹0"
+                            android:textColor="#FFF"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content" />
+
+                        <Button
+                            android:id="@+id/btnWithdraw"
+                            android:text="WITHDRAW"
+                            android:enabled="false"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#666666" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+            <!-- Monthly Commission Card -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_inner_card"
+                android:padding="16dp"
+                android:elevation="6dp">
+
+                <TextView
+                    android:text="MONTHLY COMMISSION"
+                    android:textColor="#FFB300"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="ROOKIE STAR   0 / 400 REFERRALS   GOLD STAR"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:layout_marginTop="6dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/btnCommissionInfo"
+                    android:text="GET 2.5% COMMISSION"
+                    android:layout_marginTop="12dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#FF6F00"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:text="Click here for details!"
+                    android:textColor="#BBBBBB"
+                    android:textSize="13sp"
+                    android:gravity="center"
+                    android:layout_marginTop="6dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

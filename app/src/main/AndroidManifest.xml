@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.PlayZelo"
+        tools:targetApi="31">
+        <activity
+            android:name=".activities.WithdrawActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.sudoku.SudokuActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.sudoku.SudokuSplashActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.colorMatching.ColorSplashActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.colorMatching.ColorMatchingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.birdShooting.BirdShootingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.birdShooting.BirdSplashActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.jackpot.JackpotActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.jackpot.JackpotSplashActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.highstakedice.HighStakeDiceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.highstakedice.HighStakeDiceSplashActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.lottery.LotteryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.lottery.LotterySplashActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.Teenpatti.TeenpattiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.Teenpatti.TeenpattiSplashActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ludo.LudoSplashActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.birdShooting.BirdShootingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ludo.LudoActivity"
+            android:exported="false" /> <!-- <activity -->
+
+        <activity
+            android:name=".activities.BaseActivity"
+            android:exported="false" />
+<!--        <activity-->
+<!--            android:name="com.playzelo.highstakesmodule.StakesMainActivity"-->
+<!--            android:exported="true" />-->
+        <activity
+            android:name=".activities.TermsAndConditionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.mines.MinesGameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.mines.MinesSplashActivity"
+            android:exported="false" />
+        <activity android:name=".activities.QRPaymentActivity" />
+        <activity
+            android:name=".activities.lottery.LotterySplashActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ResponsibleGamingActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.GameManagementActivity"
+            android:exported="true" />
+<!--        <activity-->
+<!--            android:name="com.playzelo.teenpattimodule.TeenpattiMainActivity"-->
+<!--            android:exported="true"-->
+<!--            android:screenOrientation="landscape" />-->
+        <activity
+            android:name=".activities.TransactionDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ChatActivity"
+            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".activities.LeaderboardActivity"-->
+<!--            android:exported="false" />-->
+        <activity
+            android:name=".activities.TransactionHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.TopWinnersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.GameHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.DashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AddMoneyActivity"
+            android:exported="false" />
+        <activity android:name=".activities.WalletActivity" />
+        <activity
+            android:name=".activities.ResetPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.OtpVerificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.MainActivity"
+            android:exported="true" />
+<!--        <activity-->
+<!--            android:name="com.playzelo.jackpotmodule.activity.SplashActivity"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />-->
+<!--        <activity-->
+<!--            android:name="com.playzelo.jackpotmodule.activity.DashboardActivity"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />-->
+<!--        <activity-->
+<!--            android:name="com.playzelo.jackpotmodule.activity.TournamentsActivity"-->
+<!--            android:configChanges="orientation|screenSize"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />-->
+<!--        <activity-->
+<!--            android:name="com.playzelo.jackpotmodule.activity.CountdownActivity"-->
+<!--            android:configChanges="orientation|screenSize"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />-->
+<!--        <activity-->
+<!--            android:name="com.playzelo.jackpotmodule.activity.GameActivity"-->
+<!--            android:configChanges="orientation|screenSize"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />-->
+<!--        <activity-->
+<!--            android:name="com.playzelo.ludomodule.activity.SplashActivity"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />-->
+<!--        <activity-->
+<!--            android:name="com.playzelo.ludomodule.activity.CountdownActivity"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />-->
+<!--        <activity-->
+<!--            android:name="com.playzelo.ludomodule.activity.GameRoomActivity"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />-->
+<!--        <activity-->
+<!--            android:name="com.playzelo.ludomodule.activity.MainActivity"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />-->
+<!--        <activity-->
+<!--            android:name="com.playzelo.ludomodule.activity.TournamentsActivity"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />-->
+<!--        <activity-->
+<!--            android:name="com.playzelo.ludomodule.activity.MatchmakingActivity"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />-->
+    </application>
+
+</manifest>
