@@ -64,10 +64,12 @@
             android:name=".activities.lottery.LotterySplashActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.Teenpatti.TeenpattiActivity"
-            android:exported="false" />
+            android:name=".activities.Teenpatti.TeenPattiActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="unspecified"/>
         <activity
-            android:name=".activities.Teenpatti.TeenpattiSplashActivity"
+            android:name=".activities.Teenpatti.TeenPattiSplashActivity"
             android:exported="false" />
         <activity
             android:name=".activities.ludo.LudoSplashActivity"

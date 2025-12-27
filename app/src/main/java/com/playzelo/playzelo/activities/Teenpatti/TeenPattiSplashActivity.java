@@ -10,7 +10,7 @@ import com.playzelo.playzelo.activities.BaseActivity;
 import com.playzelo.playzelo.databinding.ActivityTeenpattiSplashBinding;
 import com.playzelo.playzelo.utils.SharedPrefManager;
 
-public class TeenpattiSplashActivity extends BaseActivity {
+public class TeenPattiSplashActivity extends BaseActivity {
 
     private ActivityTeenpattiSplashBinding binding;
     private String userId, username, authToken;
@@ -68,7 +68,7 @@ public class TeenpattiSplashActivity extends BaseActivity {
 
     /* ================= NAVIGATION ================= */
     private void navigateNext() {
-        Intent intent = new Intent(this, TeenpattiActivity.class);
+        Intent intent = new Intent(this, TeenPattiActivity.class);
 
         if (userId != null && authToken != null) {
             intent.putExtra("userId", userId);

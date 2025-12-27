@@ -1,10 +1,9 @@
-package com.playzelo.playzelo.activities.jackpot;
+package com.playzelo.playzelo.activities.Teenpatti;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -12,38 +11,44 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import androidx.annotation.Nullable;
-
 import com.playzelo.playzelo.R;
 import com.playzelo.playzelo.activities.BaseActivity;
 import com.playzelo.playzelo.activities.LoginActivity;
 import com.playzelo.playzelo.utils.SharedPrefManager;
 
-public class JackpotActivity extends BaseActivity {
+public class TeenPattiActivity extends BaseActivity {
 
     private WebView webView;
-    private String userId, authToken, username;
 
-    private static final String JACKPOT_URL = "https://playzelo.fun/jackpot/690db1754b1ddd1a4271964e";
-    private final Handler handler = new Handler(Looper.getMainLooper());
+    private String userId;
+    private String authToken;
+    private String username;
+
+    private static final String TEENPATTI_URL =
+            "https://playzelo.fun/teenpatti/690db1bf4b1ddd1a42719651";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_jackpot);
 
-        webView = findViewById(R.id.jackpotWebView);
+        // Force landscape
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        setContentView(R.layout.activity_teenpatti);
+
+        webView = findViewById(R.id.teenPattiWebView);
 
         fetchUserData();
         setupWebView();
     }
 
-    /* ================= FETCH USER DATA ================= */
     private void fetchUserData() {
-        userId = getIntent().getStringExtra("userId");
-        authToken = getIntent().getStringExtra("authToken");
-        username = getIntent().getStringExtra("username");
+        Intent intent = getIntent();
+        if (intent != null) {
+            userId = intent.getStringExtra("userId");
+            authToken = intent.getStringExtra("authToken");
+            username = intent.getStringExtra("username");
+        }
 
         if (authToken == null || authToken.isEmpty()) {
             SharedPrefManager pref = SharedPrefManager.getInstance(this);
@@ -53,7 +58,6 @@ public class JackpotActivity extends BaseActivity {
         }
     }
 
-    /* ================= WEBVIEW SETUP ================= */
     @SuppressLint("SetJavaScriptEnabled")
     private void setupWebView() {
         WebSettings settings = webView.getSettings();
@@ -64,45 +68,48 @@ public class JackpotActivity extends BaseActivity {
 
         webView.setWebChromeClient(new WebChromeClient());
 
+        // ✅ Inject login data AFTER page is loaded
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                syncLoginWithWeb();
 
-                // 🔥 Inject login after page load
-                injectLoginData();
+                // Optional JS call to refresh wallet/profile immediately
+                view.evaluateJavascript(
+                        "if(window.onAndroidLogin){window.onAndroidLogin();}",
+                        null
+                );
             }
         });
 
-        webView.addJavascriptInterface(new JackpotWebInterface(), "Android");
+        webView.addJavascriptInterface(new TeenPattiWebInterface(), "Android");
 
-        // ✅ Load URL after WebView setup
-        webView.loadUrl(JACKPOT_URL);
+        // ✅ Load URL after WebViewClient is set
+        webView.loadUrl(TEENPATTI_URL);
     }
 
-    /* ================= INJECT LOGIN DATA ================= */
-    private void injectLoginData() {
-        if (authToken == null || authToken.isEmpty() || webView == null) return;
+    private void syncLoginWithWeb() {
+        if (authToken == null || authToken.isEmpty()) return;
 
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptCookie(true);
         cookieManager.setAcceptThirdPartyCookies(webView, true);
 
-        // ✅ Set domain-level cookie
+        // ✅ Use domain-level cookie for all games
         cookieManager.setCookie(".playzelo.fun", "token=" + authToken + "; path=/");
         cookieManager.flush();
 
-        // ✅ Inject localStorage
+        // ✅ Inject token into localStorage
         webView.evaluateJavascript(
-                "localStorage.setItem('token','" + authToken + "');" +
+                "localStorage.clear();" +
+                        "localStorage.setItem('token','" + authToken + "');" +
                         "localStorage.setItem('userId','" + userId + "');" +
-                        "localStorage.setItem('username','" + username + "');" +
-                        "if(window.onAndroidLogin){window.onAndroidLogin();}",
+                        "localStorage.setItem('username','" + username + "');",
                 null
         );
     }
 
-    /* ================= LOGOUT ================= */
     private void logoutWeb() {
         CookieManager.getInstance().removeAllCookies(null);
         CookieManager.getInstance().flush();
@@ -112,31 +119,24 @@ public class JackpotActivity extends BaseActivity {
         webView.clearHistory();
     }
 
-    /* ================= JS → ANDROID BRIDGE ================= */
-    class JackpotWebInterface {
+    class TeenPattiWebInterface {
         @JavascriptInterface
         public void logoutFromWeb() {
             runOnUiThread(() -> {
-                SharedPrefManager.getInstance(JackpotActivity.this).logout();
+                SharedPrefManager.getInstance(TeenPattiActivity.this).logout();
                 logoutWeb();
 
-                // Reload the game page after logout
-                webView.loadUrl(JACKPOT_URL);
+                Intent i = new Intent(TeenPattiActivity.this, LoginActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
+                finish();
             });
         }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        // Refresh login data whenever user comes back
-        injectLoginData();
-    }
-
-    @Override
     protected void onDestroy() {
         if (webView != null) webView.destroy();
-        handler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
 }

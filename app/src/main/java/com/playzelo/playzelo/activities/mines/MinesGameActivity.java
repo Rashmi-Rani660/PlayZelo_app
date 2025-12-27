@@ -1,93 +1,143 @@
 package com.playzelo.playzelo.activities.mines;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.playzelo.playzelo.LudoWebInterface;
+import androidx.annotation.Nullable;
+
+import com.playzelo.playzelo.R;
 import com.playzelo.playzelo.activities.BaseActivity;
-import com.playzelo.playzelo.databinding.ActivityMinesGameBinding;
+import com.playzelo.playzelo.activities.LoginActivity;
 import com.playzelo.playzelo.utils.SharedPrefManager;
 
 public class MinesGameActivity extends BaseActivity {
 
-    private ActivityMinesGameBinding binding;
-    private String userId, username, authToken, wallet;
+    private WebView webView;
+    private String userId;
+    private String authToken;
+    private String username;
+
+    private static final String MINES_URL =
+            "https://playzelo.fun/mines/690db0894b1ddd1a42719648";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMinesGameBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_mines_game);
 
-        // ================= FETCH DATA FROM INTENT =================
-        userId = getIntent().getStringExtra("userId");
-        username = getIntent().getStringExtra("username");
-        authToken = getIntent().getStringExtra("authToken");
-        wallet = getIntent().getStringExtra("wallet");
+        webView = findViewById(R.id.minesWebView);
 
-        // fallback: SharedPrefManager
-        SharedPrefManager pref = SharedPrefManager.getInstance(this);
-        if(userId == null) userId = SharedPrefManager.getInstance(this).getUserId();
-        if(authToken == null) authToken = SharedPrefManager.getInstance(this).getToken();
-        if(username == null) username = SharedPrefManager.getInstance(this).getUsername();
-
-
-        Log.d("MinesGame", "ID=" + userId + ", Name=" + username + ", Token=" + authToken + ", Wallet=" + wallet);
-
+        fetchUserData();
         setupWebView();
     }
 
+    /* ================= FETCH USER DATA ================= */
+    private void fetchUserData() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            userId = intent.getStringExtra("userId");
+            authToken = intent.getStringExtra("authToken");
+            username = intent.getStringExtra("username");
+        }
+
+        if (authToken == null || authToken.isEmpty()) {
+            SharedPrefManager pref = SharedPrefManager.getInstance(this);
+            userId = pref.getUserId();
+            authToken = pref.getToken();
+            username = pref.getUsername();
+        }
+    }
+
+    /* ================= WEBVIEW SETUP ================= */
     @SuppressLint("SetJavaScriptEnabled")
     private void setupWebView() {
-        WebSettings webSettings = binding.mineswebView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        WebSettings settings = webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        settings.setMediaPlaybackRequiresUserGesture(false);
 
-        // Pass Android → JS bridge data
-        binding.mineswebView.addJavascriptInterface(
-                new LudoWebInterface(this),
-                "AndroidApp"
-        );
+        webView.setWebChromeClient(new WebChromeClient());
 
-
-
-        binding.mineswebView.setWebViewClient(new WebViewClient() {
+        // ✅ Inject login data after page load
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                binding.progressBar.setVisibility(View.GONE);
+                super.onPageFinished(view, url);
+                syncLoginWithWeb();
 
-                // optional: hide home button or apply UI fixes
+                // Optional: trigger wallet/profile refresh in JS
                 view.evaluateJavascript(
-                        "(function(){ console.log('Android data:', AndroidApp.getUserData()); })()",
+                        "if(window.onAndroidLogin){window.onAndroidLogin();}",
                         null
                 );
             }
         });
 
-        binding.mineswebView.setWebChromeClient(new WebChromeClient());
-        binding.mineswebView.setOnLongClickListener(v -> true);
+        webView.addJavascriptInterface(new MinesWebInterface(), "Android");
 
-        // ✅ Load game URL
-        binding.mineswebView.loadUrl("https://playzelo.fun/mines/690db0894b1ddd1a42719648");
+        // ✅ Load URL after client is ready
+        webView.loadUrl(MINES_URL);
+    }
+
+    /* ================= LOGIN SYNC ================= */
+    private void syncLoginWithWeb() {
+        if (authToken == null || authToken.isEmpty()) return;
+
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(true);
+        cookieManager.setAcceptThirdPartyCookies(webView, true);
+
+        // ✅ Use domain-level cookie for all games
+        cookieManager.setCookie(".playzelo.fun", "token=" + authToken + "; path=/");
+        cookieManager.flush();
+
+        // ✅ Inject token into localStorage
+        webView.evaluateJavascript(
+                "localStorage.clear();" +
+                        "localStorage.setItem('token','" + authToken + "');" +
+                        "localStorage.setItem('userId','" + userId + "');" +
+                        "localStorage.setItem('username','" + username + "');",
+                null
+        );
+    }
+
+    /* ================= LOGOUT ================= */
+    private void logoutWeb() {
+        CookieManager.getInstance().removeAllCookies(null);
+        CookieManager.getInstance().flush();
+        webView.evaluateJavascript("localStorage.clear();", null);
+        webView.clearCache(true);
+        webView.clearHistory();
+    }
+
+    /* ================= JS → ANDROID BRIDGE ================= */
+    class MinesWebInterface {
+        @JavascriptInterface
+        public void logoutFromWeb() {
+            runOnUiThread(() -> {
+                SharedPrefManager.getInstance(MinesGameActivity.this).logout();
+                logoutWeb();
+
+                Intent i = new Intent(MinesGameActivity.this, LoginActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
+                finish();
+            });
+        }
     }
 
     @Override
-    public void onBackPressed() {
-        if (binding.mineswebView.canGoBack()) {
-            binding.mineswebView.goBack();
-        } else {
-            super.onBackPressed();
-        }
+    protected void onDestroy() {
+        if (webView != null) webView.destroy();
+        super.onDestroy();
     }
 }

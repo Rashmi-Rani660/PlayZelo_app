@@ -1,49 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#0F172A">
+    android:layout_height="match_parent">
 
-    <!-- 🔙 Back Button -->
-    <ImageView
-        android:id="@+id/btnBack"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="12dp"
-        android:padding="8dp"
-        android:src="@drawable/ic_back"
-        android:tint="#FFFFFF"
-        android:background="?attr/selectableItemBackgroundBorderless" />
-
-    <!-- 🎲 Game Title -->
-    <TextView
-        android:id="@+id/txtTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ludo"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp" />
-
-    <!-- 🌐 WebView -->
     <WebView
         android:id="@+id/ludoWebView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/txtTitle"
-        android:layout_marginTop="12dp" />
-
-    <!-- ⏳ Loading -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_centerInParent="true"
-        android:visibility="visible"
-        android:elevation="10dp" />
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

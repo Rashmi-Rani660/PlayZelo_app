@@ -15,14 +15,15 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.playzelo.playzelo.R;
-import com.playzelo.playzelo.activities.Teenpatti.TeenpattiSplashActivity;
+import com.playzelo.playzelo.activities.Teenpatti.TeenPattiSplashActivity;
+//import com.playzelo.playzelo.activities.birdShooting.BirdSplashActivity;
+//import com.playzelo.playzelo.activities.colorMatching.ColorSplashActivity;
 import com.playzelo.playzelo.activities.birdShooting.BirdSplashActivity;
 import com.playzelo.playzelo.activities.colorMatching.ColorSplashActivity;
 import com.playzelo.playzelo.activities.highstakedice.HighStakeDiceSplashActivity;
 import com.playzelo.playzelo.activities.jackpot.JackpotSplashActivity;
 import com.playzelo.playzelo.activities.lottery.LotterySplashActivity;
 import com.playzelo.playzelo.activities.ludo.LudoActivity;
-import com.playzelo.playzelo.activities.ludo.LudoSplashActivity;
 import com.playzelo.playzelo.activities.mines.MinesSplashActivity;
 import com.playzelo.playzelo.activities.sudoku.SudokuSplashActivity;
 import com.playzelo.playzelo.databinding.ActivityMainBinding;
@@ -256,7 +257,7 @@ public class MainActivity extends BaseActivity {
         safeClick(binding.layoutChips,  () -> startActivity(new Intent(this, WalletActivity.class)));
 
         safeClick(binding.btnLudo, () -> openGame(LudoActivity.class));
-        safeClick(binding.btnTeenpatti, () -> openGame(TeenpattiSplashActivity.class));
+        safeClick(binding.btnTeenpatti, () -> openGame(TeenPattiSplashActivity.class));
         safeClick(binding.btnHunt, () -> openGame(BirdSplashActivity.class));
         safeClick(binding.btnLottery, () -> openGame(LotterySplashActivity.class));
         safeClick(binding.btnMines, () -> openGame(MinesSplashActivity.class));

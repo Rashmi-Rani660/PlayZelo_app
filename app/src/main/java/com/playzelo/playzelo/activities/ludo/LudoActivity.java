@@ -1,135 +1,128 @@
 package com.playzelo.playzelo.activities.ludo;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.webkit.CookieManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-
-import com.playzelo.playzelo.LudoWebInterface;
+import com.playzelo.playzelo.R;
 import com.playzelo.playzelo.activities.BaseActivity;
-import com.playzelo.playzelo.databinding.ActivityLudoBinding;
+import com.playzelo.playzelo.activities.LoginActivity;
 import com.playzelo.playzelo.utils.SharedPrefManager;
 
 public class LudoActivity extends BaseActivity {
 
-    private ActivityLudoBinding binding;
-    private double walletBalance;
+    private WebView webView;
+
+    private static final String LUDO_URL =
+            "https://playzelo.fun/ludo/690db1e64b1ddd1a42719654";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_ludo);
 
-        // ✅ FIRST inflate & set content view
-        binding = ActivityLudoBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        webView = findViewById(R.id.ludoWebView);
 
-        // ✅ Back button (NOW SAFE)
-        binding.btnBack.setOnClickListener(v -> onBackPressed());
-
-        resetWebView();
-
-        if (!loadUserData()) return;
-
-        setupWebView();
-
-        binding.ludoWebView.loadUrl(
-                "https://playzelo.fun/ludo/690db1e64b1ddd1a42719654"
-        );
-    }
-
-    private void resetWebView() {
-        CookieManager.getInstance().setAcceptCookie(true);
-        CookieManager.getInstance().removeAllCookies(null);
-        CookieManager.getInstance().flush();
-
-        binding.ludoWebView.clearCache(true);
-        binding.ludoWebView.clearHistory();
-        binding.ludoWebView.loadUrl("about:blank");
-    }
-
-    private boolean loadUserData() {
-        SharedPrefManager pref = SharedPrefManager.getInstance(this);
-        walletBalance = pref.getWalletBalance();
-
-        if (pref.getUserId() == null || pref.getToken() == null || pref.getToken().isEmpty()) {
-            Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_SHORT).show();
-            finish();
-            return false;
-        }
-
-        Log.d("LUDO_USER", "Wallet=" + walletBalance);
-        return true;
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    private void setupWebView() {
-        WebSettings settings = binding.ludoWebView.getSettings();
+        WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
-        settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        settings.setLoadWithOverviewMode(true);
-        settings.setUseWideViewPort(true);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
 
-        binding.ludoWebView.addJavascriptInterface(
-                new LudoWebInterface(this),
-                "AndroidApp"
-        );
+        webView.setWebChromeClient(new WebChromeClient());
 
-        binding.ludoWebView.setWebViewClient(new WebViewClient() {
-
+        // ✅ IMPORTANT: inject data AFTER page load
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                binding.progressBar.setVisibility(ProgressBar.GONE);
+                super.onPageFinished(view, url);
 
-                updateChipsUI(walletBalance);
+                // 🔥 Inject fresh login data AFTER page is ready
+                syncLoginWithWeb();
 
+                // 🔁 Optional: ask web to re-fetch wallet/profile
                 view.evaluateJavascript(
-                        "javascript:if(window.AndroidApp && window.onAndroidData){ " +
-                                "onAndroidData(JSON.parse(AndroidApp.getUserData())); }",
+                        "if(window.onAndroidLogin){window.onAndroidLogin();}",
                         null
                 );
             }
         });
 
-        binding.ludoWebView.setWebChromeClient(new WebChromeClient());
-        binding.ludoWebView.setOnLongClickListener(v -> true);
+        webView.addJavascriptInterface(new LudoWebInterface(), "Android");
+
+        // ❌ DO NOT call syncLoginWithWeb() here
+        webView.loadUrl(LUDO_URL);
     }
 
-    public void updateChipsUI(double balance) {
-        walletBalance = balance;
-        SharedPrefManager.getInstance(this).saveWalletBalance(balance);
+    // 🔥 Send Android login data to Web (CORRECT WAY)
+    private void syncLoginWithWeb() {
 
-        String js =
-                "javascript:(function(){" +
-                        "let span=document.querySelector('div.absolute span:nth-child(2)');" +
-                        "if(span){span.innerText='" + balance + " Chips';}" +
-                        "})()";
+        SharedPrefManager pref = SharedPrefManager.getInstance(this);
 
-        binding.ludoWebView.evaluateJavascript(js, null);
+        String token = pref.getToken();
+        String userId = pref.getUserId();
+        String username = pref.getUsername();
+
+        if (token == null || token.isEmpty()) return;
+
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(true);
+        cookieManager.setAcceptThirdPartyCookies(webView, true);
+
+        // ✅ IMPORTANT: set COOKIE ON DOMAIN (not full URL)
+        cookieManager.setCookie(
+                ".playzelo.fun",
+                "token=" + token + "; path=/"
+        );
+        cookieManager.flush();
+
+        // ✅ Clear old data + inject fresh data
+        webView.evaluateJavascript(
+                "localStorage.clear();" +
+                        "localStorage.setItem('token','" + token + "');" +
+                        "localStorage.setItem('userId','" + userId + "');" +
+                        "localStorage.setItem('username','" + username + "');",
+                null
+        );
     }
 
-    @Override
-    public void onBackPressed() {
-        if (binding.ludoWebView.canGoBack()) {
-            binding.ludoWebView.goBack();
-        } else {
-            finish();
+    // 🔥 Android logout → Web logout
+    public void logoutWeb() {
+
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.removeAllCookies(null);
+        cookieManager.flush();
+
+        webView.evaluateJavascript(
+                "localStorage.clear();", null);
+
+        webView.clearCache(true);
+        webView.clearHistory();
+    }
+
+    // 🔥 Web → Android bridge
+    class LudoWebInterface {
+
+        @JavascriptInterface
+        public void logoutFromWeb() {
+
+            runOnUiThread(() -> {
+
+                SharedPrefManager.getInstance(LudoActivity.this).logout();
+
+                logoutWeb();
+
+                Intent i = new Intent(LudoActivity.this, LoginActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
+                finish();
+            });
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        binding.ludoWebView.destroy();
-        super.onDestroy();
     }
 }

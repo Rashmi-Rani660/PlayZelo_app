@@ -1,99 +1,136 @@
 package com.playzelo.playzelo.activities.lottery;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.playzelo.playzelo.LudoWebInterface;
-import com.playzelo.playzelo.activities.BaseActivity;
-import com.playzelo.playzelo.databinding.ActivityLotteryBinding;
-import com.playzelo.playzelo.utils.SharedPrefManager;
+import androidx.annotation.Nullable;
 
-import java.util.Objects;
+import com.playzelo.playzelo.R;
+import com.playzelo.playzelo.activities.BaseActivity;
+import com.playzelo.playzelo.activities.LoginActivity;
+import com.playzelo.playzelo.utils.SharedPrefManager;
 
 public class LotteryActivity extends BaseActivity {
 
-    private ActivityLotteryBinding binding;
-    private String userId;
-    private String authToken;
-    private String username;
+    private WebView webView;
+    private String userId, authToken, username;
+
+    private static final String LOTTERY_URL = "https://playzelo.fun/lottery/690db14b4b1ddd1a4271964b";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityLotteryBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_lottery);
 
-        // ================= GET USER DATA =================
-        SharedPrefManager pref = SharedPrefManager.getInstance(this);
-        userId = pref.getUserId();
-        authToken = pref.getToken();
-        username = pref.getUsername();
+        webView = findViewById(R.id.lotteryWebView);
 
-        Log.d("LotteryGame", "userId=" + userId + " authToken=" + authToken + " username=" + username);
+        fetchUserData();
+        setupWebView();
+    }
 
-        // ================= WEBVIEW SETTINGS =================
-        WebSettings webSettings = binding.lotteryWebView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+    /* ================= FETCH USER DATA ================= */
+    private void fetchUserData() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            userId = intent.getStringExtra("userId");
+            authToken = intent.getStringExtra("authToken");
+            username = intent.getStringExtra("username");
+        }
 
-        // ================= JS INTERFACE =================
-        binding.lotteryWebView.addJavascriptInterface(new LudoWebInterface(this), "AndroidApp");
+        if (authToken == null || authToken.isEmpty()) {
+            SharedPrefManager pref = SharedPrefManager.getInstance(this);
+            userId = pref.getUserId();
+            authToken = pref.getToken();
+            username = pref.getUsername();
+        }
+    }
 
-        binding.lotteryWebView.setWebViewClient(new WebViewClient() {
+    /* ================= WEBVIEW SETUP ================= */
+    @SuppressLint("SetJavaScriptEnabled")
+    private void setupWebView() {
+        WebSettings settings = webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        settings.setMediaPlaybackRequiresUserGesture(false);
 
+        webView.setWebChromeClient(new WebChromeClient());
+
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                binding.progressBar.setVisibility(View.GONE);
-
-                // Sync user data to web
-                view.evaluateJavascript(
-                        "javascript:if(window.onAndroidData){" +
-                                "onAndroidData(JSON.parse(AndroidApp.getUserData()));" +
-                                "}",
-                        null
-                );
-
                 super.onPageFinished(view, url);
-            }
+                syncLoginWithWeb();
 
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (Objects.equals(url, "https://playzelo.fun/") || Objects.equals(url, "https://playzelo.fun")) {
-                    return true;
-                }
-                view.loadUrl(url);
-                return true;
+                // Optional JS wallet/profile refresh
+                view.evaluateJavascript("if(window.onAndroidLogin){window.onAndroidLogin();}", null);
             }
         });
 
-        binding.lotteryWebView.setWebChromeClient(new WebChromeClient());
-        binding.lotteryWebView.setOnLongClickListener(v -> true);
+        webView.addJavascriptInterface(new LotteryWebInterface(), "Android");
 
-        // ✅ Load game URL
-        binding.lotteryWebView.loadUrl(
-                "https://playzelo.fun/lottery/690db14b4b1ddd1a4271964b"
+        // Load the lottery game page
+        webView.loadUrl(LOTTERY_URL);
+    }
+
+    /* ================= LOGIN SYNC ================= */
+    private void syncLoginWithWeb() {
+        if (authToken == null || authToken.isEmpty()) return;
+
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(true);
+        cookieManager.setAcceptThirdPartyCookies(webView, true);
+
+        // Set domain-level cookie for all games
+        cookieManager.setCookie(".playzelo.fun", "token=" + authToken + "; path=/");
+        cookieManager.flush();
+
+        // Inject token into localStorage
+        webView.evaluateJavascript(
+                "localStorage.clear();" +
+                        "localStorage.setItem('token','" + authToken + "');" +
+                        "localStorage.setItem('userId','" + userId + "');" +
+                        "localStorage.setItem('username','" + username + "');",
+                null
         );
+    }
 
-        Log.d("LotteryGame", "Loading lottery Game");
+    /* ================= LOGOUT ================= */
+    private void logoutWeb() {
+        CookieManager.getInstance().removeAllCookies(null);
+        CookieManager.getInstance().flush();
+        webView.evaluateJavascript("localStorage.clear();", null);
+        webView.clearCache(true);
+        webView.clearHistory();
+    }
+
+    /* ================= JS → ANDROID BRIDGE ================= */
+    class LotteryWebInterface {
+        @JavascriptInterface
+        public void logoutFromWeb() {
+            runOnUiThread(() -> {
+                SharedPrefManager.getInstance(LotteryActivity.this).logout();
+                logoutWeb();
+
+                Intent i = new Intent(LotteryActivity.this, LoginActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
+                finish();
+            });
+        }
     }
 
     @Override
-    public void onBackPressed() {
-        if (binding.lotteryWebView.canGoBack()) {
-            binding.lotteryWebView.goBack();
-        } else {
-            super.onBackPressed();
-        }
+    protected void onDestroy() {
+        if (webView != null) webView.destroy();
+        super.onDestroy();
     }
 }

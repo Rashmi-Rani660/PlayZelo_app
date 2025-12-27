@@ -43,10 +43,12 @@ public class LudoWebInterface {
             double balance = Double.parseDouble(newBalance);
             SharedPrefManager.getInstance(context).saveWalletBalance(balance);
 
-            // optional: log
-            System.out.println("Wallet updated from Web: " + balance);
+            // Android log instead of System.out
+            android.util.Log.d("LUDO_WEB", "Wallet updated from Web: " + balance);
+        } catch (NumberFormatException e) {
+            android.util.Log.e("LUDO_WEB", "Invalid wallet value from Web: " + newBalance, e);
         } catch (Exception e) {
-            e.printStackTrace();
+            android.util.Log.e("LUDO_WEB", "Error updating wallet from Web", e);
         }
     }
 }

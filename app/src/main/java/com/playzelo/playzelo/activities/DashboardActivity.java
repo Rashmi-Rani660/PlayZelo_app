@@ -11,6 +11,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import android.webkit.CookieManager;
+import android.webkit.WebStorage;
+
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -117,7 +121,13 @@ public class DashboardActivity extends BaseActivity {
     }
 
     private void performLogout() {
+
+        // 🔥 Clear WebView (Ludo) session
+        clearWebViewSession();
+
+        // 🔥 Clear Android session
         SharedPrefManager.getInstance(this).logout();
+
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -228,6 +238,18 @@ public class DashboardActivity extends BaseActivity {
 
         return bitmap;
     }
+
+    private void clearWebViewSession() {
+
+        // Clear cookies
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.removeAllCookies(null);
+        cookieManager.flush();
+
+        // Clear HTML5 storage
+        WebStorage.getInstance().deleteAllData();
+    }
+
 
     private void handleSessionExpired() {
         Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_SHORT).show();

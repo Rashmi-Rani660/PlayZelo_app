@@ -2,175 +2,171 @@ package com.playzelo.playzelo.activities.colorMatching;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
 
+import com.playzelo.playzelo.R;
 import com.playzelo.playzelo.activities.BaseActivity;
-import com.playzelo.playzelo.databinding.ActivityMinesGameBinding;
+import com.playzelo.playzelo.utils.SharedPrefManager;
 
 public class ColorMatchingActivity extends BaseActivity {
 
-    private ActivityMinesGameBinding binding;
+    private WebView webView;
+    private String userId, authToken, username;
+    private boolean loginInjected = false;
+
+    private static final String ENTRY_URL =
+            "https://playzelo.fun/colormatching/690db680cd0cff473aed5f3d";
+    private static final String PLAY_URL =
+            "https://playzelo.fun/colormatching/690db680cd0cff473aed5f3d/play";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMinesGameBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
 
-        WebSettings webSettings = binding.mineswebView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        // ✅ FULL SCREEN GAME MODE
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        );
 
-        binding.mineswebView.setWebViewClient(new WebViewClient() {
+        setContentView(R.layout.activity_color_matching);
 
+        webView = findViewById(R.id.colorMatchingWebView);
+
+        fetchUserData();
+        setupWebView();
+        clearWebDataOnce();
+        injectLoginAndLoad();
+    }
+
+    private void fetchUserData() {
+        userId = getIntent().getStringExtra("userId");
+        authToken = getIntent().getStringExtra("authToken");
+        username = getIntent().getStringExtra("username");
+
+        if (authToken == null || authToken.isEmpty()) {
+            SharedPrefManager pref = SharedPrefManager.getInstance(this);
+            userId = pref.getUserId();
+            authToken = pref.getToken();
+            username = pref.getUsername();
+        }
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private void setupWebView() {
+        WebSettings s = webView.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        s.setMediaPlaybackRequiresUserGesture(false);
+
+        // ✅ GAME SCALING SETTINGS
+        s.setLoadWithOverviewMode(true);
+        s.setUseWideViewPort(true);
+        s.setBuiltInZoomControls(false);
+        s.setDisplayZoomControls(false);
+        s.setSupportZoom(false);
+
+        webView.setWebChromeClient(new WebChromeClient());
+
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                binding.progressBar.setVisibility(View.GONE);
-
-//                view.evaluateJavascript(
-//
-//                        "(function(){" +
-//                                "  var headerDiv = document.querySelector('div.bg\\\\[\\\\#0f1425\\\\]');" +
-//                                "  if(headerDiv){ " +
-//                                "    headerDiv.style.setProperty('background', '#4B9DA9', 'important');" + // 🔹 Your desired color
-//                                "  }" +
-//
-//                                // function to hide Go to Home
-//                                "function hideGoHome() {" +
-//                                "  var links = document.querySelectorAll('a');" +
-//                                "  links.forEach(function(link) {" +
-//                                "    if(link.innerText && link.innerText.trim().includes('Go to Home')) {" +
-//                                "      var parent = link.closest('div');" +
-//                                "      if(parent) parent.style.display = 'none';" +
-//                                "      link.style.display = 'none';" +
-//                                "    }" +
-//                                "  });" +
-//                                "}" +
-//
-//                                // run immediately
-//                                "hideGoHome();" +
-//
-//                                // keep checking (for SPA / React re-render)
-//                                "setInterval(hideGoHome, 500);" +
-//
-//                                // observe DOM changes
-//                                "var observer = new MutationObserver(function() { hideGoHome(); });" +
-//                                "observer.observe(document.body, { childList: true, subtree: true });" +
-//                                /* ---------- FIND & FIX MINES PANEL ---------- */
-//                                "function stylePanel(){" +
-//
-//                                /* find panel by content */
-//                                " var panel=null;" +
-//                                " document.querySelectorAll('div').forEach(function(d){" +
-//                                "  if(d.innerText && d.innerText.includes('Current Bet') && d.innerText.includes('Safe Picks')){" +
-//                                "   panel=d;" +
-//                                "  }" +
-//                                " });" +
-//
-//                                " if(!panel) return;" +
-//                                " if(panel.dataset.fixed) return;" +
-//                                " panel.dataset.fixed='true';" +
-//
-//                                /* 🔥 FORCE GRID */
-//                                " panel.style.display='grid';" +
-//                                " panel.style.gridTemplateColumns='1fr 1fr';" +
-//                                " panel.style.gap='10px';" +
-//                                " panel.style.padding='12px';" +
-//                                " panel.style.borderRadius='14px';" +
-//
-//                                " var items=[...panel.children];" +
-//
-//                                /* 2x2 STATS */
-//                                " for(var i=0;i<4;i++){" +
-//                                "  if(items[i]){" +
-//                                "   items[i].style.gridColumn='span 1';" +
-//                                "   items[i].style.height='46px';" +
-//                                "   items[i].style.fontSize='12px';" +
-//                                "   items[i].style.borderRadius='10px';" +
-//                                "  }" +
-//                                " }" +
-//
-//                                /* BET INPUT */
-//                                " if(items[4]) items[4].style.gridColumn='span 2';" +
-//
-//                                /* MINES SELECT */
-//                                " if(items[5]) items[5].style.gridColumn='span 2';" +
-//
-//                                /* START GAME CTA */
-//                                " if(items[6]){" +
-//                                "  items[6].style.gridColumn='span 2';" +
-//                                "  var btn=items[6].querySelector('button');" +
-//                                "  if(btn){" +
-//                                "   btn.style.width='75%';" +
-//                                "   btn.style.margin='8px auto';" +
-//                                "   btn.style.padding='14px';" +
-//                                "   btn.style.fontSize='15px';" +
-//                                "   btn.style.borderRadius='14px';" +
-//                                "  }" +
-//                                " }" +
-//                                "}" +
-//
-//                                /* ---------- RUN & OBSERVE ---------- */
-//                                "hideGoHome();" +
-//                                "stylePanel();" +
-//
-//                                "setInterval(stylePanel,300);" +
-//
-//                                "new MutationObserver(stylePanel)" +
-//                                ".observe(document.body,{childList:true,subtree:true});" +
-//
-//
-//                                "})()",
-//                        null
-//                );
-//
-
-
                 super.onPageFinished(view, url);
-            }
 
-            // 🔒 Block redirect to website home
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.equals("https://playzelo.fun/") || url.equals("https://playzelo.fun")) {
-                    return true;
+                if (!loginInjected) {
+                    injectLogin();
+                    loginInjected = true;
                 }
-                view.loadUrl(url);
-                return true;
+
+                // ✅ Auto redirect to play page
+                if (url.equals(ENTRY_URL)) {
+                    view.loadUrl(PLAY_URL);
+                }
+
+                // ✅ FORCE GAME CANVAS FULL SIZE
+                view.evaluateJavascript(
+                        "(function() {" +
+                                "var meta = document.querySelector('meta[name=viewport]');" +
+                                "if(!meta) {" +
+                                "meta = document.createElement('meta');" +
+                                "meta.name = 'viewport';" +
+                                "document.head.appendChild(meta);" +
+                                "}" +
+                                "meta.content = 'width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';" +
+                                "document.body.style.margin='0';" +
+                                "document.body.style.padding='0';" +
+                                "document.body.style.overflow='hidden';" +
+                                "})();",
+                        null
+                );
             }
         });
 
-        binding.mineswebView.setWebChromeClient(new WebChromeClient());
+        webView.addJavascriptInterface(new ColorMatchingWebInterface(), "Android");
+    }
 
-        // ❌ Disable long press (no web feel)
-        binding.mineswebView.setOnLongClickListener(v -> true);
+    private void injectLoginAndLoad() {
+        if (authToken == null || authToken.isEmpty()) return;
 
-        // ✅ Load game URL
-        binding.mineswebView.loadUrl(
-                "https://playzelo.fun/colormatching/690db680cd0cff473aed5f3d"
+        CookieManager cm = CookieManager.getInstance();
+        cm.setAcceptCookie(true);
+        cm.setAcceptThirdPartyCookies(webView, true);
+        cm.setCookie(".playzelo.fun", "token=" + authToken + "; path=/");
+        cm.flush();
+
+        webView.evaluateJavascript(
+                "localStorage.setItem('token','" + authToken + "');" +
+                        "localStorage.setItem('userId','" + userId + "');" +
+                        "localStorage.setItem('username','" + username + "');",
+                v -> webView.loadUrl(ENTRY_URL)
         );
+    }
 
-        Log.d("ColorMatchingGame", "Loading Game");
+    private void injectLogin() {
+        webView.evaluateJavascript(
+                "localStorage.setItem('token','" + authToken + "');" +
+                        "localStorage.setItem('userId','" + userId + "');" +
+                        "localStorage.setItem('username','" + username + "');",
+                null
+        );
+    }
+
+    private void clearWebDataOnce() {
+        webView.clearCache(true);
+        webView.clearHistory();
+        CookieManager.getInstance().removeAllCookies(null);
+        CookieManager.getInstance().flush();
+        webView.evaluateJavascript("localStorage.clear();", null);
+    }
+
+    class ColorMatchingWebInterface {
+        @JavascriptInterface
+        public void logoutFromWeb() {
+            runOnUiThread(() -> {
+                SharedPrefManager.getInstance(ColorMatchingActivity.this).logout();
+                clearWebDataOnce();
+                finish();
+            });
+        }
     }
 
     @Override
-    public void onBackPressed() {
-        if (binding.mineswebView.canGoBack()) {
-            binding.mineswebView.goBack();
-        } else {
-            super.onBackPressed();
-        }
+    protected void onDestroy() {
+        if (webView != null) webView.destroy();
+        super.onDestroy();
     }
 }

@@ -1,166 +1,147 @@
 package com.playzelo.playzelo.activities.highstakedice;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+import android.os.Handler;
+import android.os.Looper;
+import android.webkit.CookieManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.playzelo.playzelo.LudoWebInterface;
-import com.playzelo.playzelo.activities.BaseActivity;
-import com.playzelo.playzelo.databinding.ActivityHighStakeDiceBinding;
-import com.playzelo.playzelo.utils.SharedPrefManager;
+import androidx.annotation.Nullable;
 
-import java.util.Objects;
+import com.playzelo.playzelo.R;
+import com.playzelo.playzelo.activities.BaseActivity;
+import com.playzelo.playzelo.activities.LoginActivity;
+import com.playzelo.playzelo.utils.SharedPrefManager;
 
 public class HighStakeDiceActivity extends BaseActivity {
 
-    private ActivityHighStakeDiceBinding binding;
+    private WebView webView;
+    private String userId, authToken, username;
 
-    private String userId;
-    private String authToken;
-    private String username;
+    private static final String HIGHSTAKEDICE_URL = "https://playzelo.fun/stakedice/690db611cd0cff473aed5f3a";
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityHighStakeDiceBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_high_stakes_dice);
 
-        binding.btnBack.setOnClickListener(v -> onBackPressed());
+        webView = findViewById(R.id.highStakeDiceWebView);
 
-        // ================= GET USER DATA FROM SHARED PREF =================
-        SharedPrefManager pref = SharedPrefManager.getInstance(this);
-        userId = pref.getUserId();
-        authToken = pref.getToken();
-        username = pref.getUsername();
+        fetchUserData();
+        setupWebView();
+    }
 
-        Log.d("HighStakeDice", "userId=" + userId + " authToken=" + authToken + " username=" + username);
+    /* ================= FETCH USER DATA ================= */
+    private void fetchUserData() {
+        userId = getIntent().getStringExtra("userId");
+        authToken = getIntent().getStringExtra("authToken");
+        username = getIntent().getStringExtra("username");
 
-        // ================= WEBVIEW SETTINGS =================
-        WebSettings webSettings = binding.highStakeDiceWebView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        if (authToken == null || authToken.isEmpty()) {
+            SharedPrefManager pref = SharedPrefManager.getInstance(this);
+            userId = pref.getUserId();
+            authToken = pref.getToken();
+            username = pref.getUsername();
+        }
+    }
 
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        );
+    /* ================= WEBVIEW SETUP ================= */
+    @SuppressLint("SetJavaScriptEnabled")
+    private void setupWebView() {
+        WebSettings settings = webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        settings.setMediaPlaybackRequiresUserGesture(false);
 
-        // ================= ADD JS INTERFACE =================
-        binding.highStakeDiceWebView.addJavascriptInterface(
-                new LudoWebInterface(this),
-                "AndroidApp"
-        );
+        webView.setWebChromeClient(new WebChromeClient());
 
-        // ================= WEBVIEW CLIENT =================
-        binding.highStakeDiceWebView.setWebViewClient(new WebViewClient() {
-
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                binding.progressBar.setVisibility(View.GONE);
-
-                // 🔄 Sync user data to web
-                view.evaluateJavascript(
-                        "javascript:if(window.onAndroidData){" +
-                                "onAndroidData(JSON.parse(AndroidApp.getUserData()));" +
-                                "}",
-                        null
-                );
-
-                // Apply UI fixes (existing logic)
-                view.evaluateJavascript(
-                        "(function () {" +
-
-                                "function applyFixes() {" +
-
-                                // 🔹 Hide 'Go to Home'"
-                                "document.querySelectorAll('a').forEach(function(a) {" +
-                                "  if (a.innerText && a.innerText.includes('Go to Home')) {" +
-                                "    a.style.display = 'none';" +
-                                "  }" +
-                                "});" +
-
-                                // 🔹 Hide bottom fixed footer
-                                "document.querySelectorAll('div.fixed.bottom-0.left-0.right-0')" +
-                                ".forEach(function(d){ d.style.display='none'; });" +
-
-                                // 🎯 Center MOBILE container
-                                "var panel = document.querySelector('.block.lg\\\\:hidden');" +
-                                "if (!panel) return;" +
-                                "if (panel.dataset.centered) return;" +
-                                "panel.dataset.centered = 'true';" +
-
-                                "var wrapper = document.createElement('div');" +
-                                "wrapper.style.position = 'fixed';" +
-                                "wrapper.style.top = '50%';" +
-                                "wrapper.style.left = '50%';" +
-                                "wrapper.style.transform = 'translate(-50%, -50%)';" +
-                                "wrapper.style.zIndex = '9999';" +
-                                "wrapper.style.width = '96%';" +
-                                "wrapper.style.maxWidth = '480px';" +
-                                "wrapper.style.maxHeight = '95vh';" +
-                                "wrapper.style.overflow = 'auto';" +
-
-                                "panel.parentNode.insertBefore(wrapper, panel);" +
-                                "wrapper.appendChild(panel);" +
-                                "panel.style.margin = '0';" +
-
-                                "}" +
-
-                                applyIntervalAndObserver() +
-
-                                "})()",
-                        null
-                );
-
                 super.onPageFinished(view, url);
-            }
 
-            // 🔒 Block redirect to home
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (Objects.equals(url, "https://playzelo.fun/") || Objects.equals(url, "https://playzelo.fun")) {
-                    return true;
-                }
-                view.loadUrl(url);
-                return true;
+                // Inject login after page load
+                injectLoginData();
+
+                // Trigger JS wallet/profile refresh
+                view.evaluateJavascript(
+                        "if(window.onAndroidLogin){window.onAndroidLogin();}",
+                        null
+                );
             }
         });
 
-        binding.highStakeDiceWebView.setWebChromeClient(new WebChromeClient());
-        binding.highStakeDiceWebView.setOnLongClickListener(v -> true);
+        webView.addJavascriptInterface(new HighStakeDiceWebInterface(), "Android");
 
-        // ✅ Load game URL
-        binding.highStakeDiceWebView.loadUrl(
-                "https://playzelo.fun/stakedice/690db611cd0cff473aed5f3a"
-        );
-
-        Log.d("HighStakeDice", "Loading dice Game");
+        // Load the game URL
+        webView.loadUrl(HIGHSTAKEDICE_URL);
     }
 
-    // ---------------- HELPER: Apply interval & DOM observer ----------------
-    private String applyIntervalAndObserver() {
-        return "setInterval(applyFixes, 300);" +
-                "new MutationObserver(applyFixes)" +
-                ".observe(document.body, { childList: true, subtree: true });";
+    /* ================= INJECT LOGIN DATA ================= */
+    private void injectLoginData() {
+        if (authToken == null || authToken.isEmpty() || webView == null) return;
+
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(true);
+        cookieManager.setAcceptThirdPartyCookies(webView, true);
+
+        // Set domain-level cookie
+        cookieManager.setCookie(".playzelo.fun", "token=" + authToken + "; path=/");
+        cookieManager.flush();
+
+        // Inject localStorage data
+        webView.evaluateJavascript(
+                "localStorage.setItem('token','" + authToken + "');" +
+                        "localStorage.setItem('userId','" + userId + "');" +
+                        "localStorage.setItem('username','" + username + "');" +
+                        "if(window.onAndroidLogin){window.onAndroidLogin();}",
+                null
+        );
+    }
+
+    /* ================= LOGOUT ================= */
+    private void logoutWeb() {
+        CookieManager.getInstance().removeAllCookies(null);
+        CookieManager.getInstance().flush();
+
+        webView.evaluateJavascript("localStorage.clear();", null);
+        webView.clearCache(true);
+        webView.clearHistory();
+    }
+
+    /* ================= JS → ANDROID BRIDGE ================= */
+    class HighStakeDiceWebInterface {
+        @JavascriptInterface
+        public void logoutFromWeb() {
+            runOnUiThread(() -> {
+                SharedPrefManager.getInstance(HighStakeDiceActivity.this).logout();
+                logoutWeb();
+
+                // Reload the game page after logout
+                webView.loadUrl(HIGHSTAKEDICE_URL);
+            });
+        }
     }
 
     @Override
-    public void onBackPressed() {
-        if (binding.highStakeDiceWebView.canGoBack()) {
-            binding.highStakeDiceWebView.goBack();
-        } else {
-            super.onBackPressed();
-        }
+    protected void onResume() {
+        super.onResume();
+        injectLoginData(); // Refresh login every time activity resumes
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (webView != null) webView.destroy();
+        handler.removeCallbacksAndMessages(null);
+        super.onDestroy();
     }
 }

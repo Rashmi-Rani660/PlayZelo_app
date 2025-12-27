@@ -14,6 +14,10 @@ import com.playzelo.playzelo.network.ApiClient;
 import com.playzelo.playzelo.network.ApiService;
 import com.playzelo.playzelo.utils.SharedPrefManager;
 
+import android.webkit.CookieManager;
+import android.webkit.WebStorage;
+
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,7 +91,13 @@ public class LoginActivity extends BaseActivity {
                             SharedPrefManager.getInstance(LoginActivity.this);
 
                     // 🔥 CLEAR OLD SESSION
+                    // 🔥 CLEAR OLD ANDROID SESSION
                     pref.logout();
+
+// 🔥 CLEAR OLD WEBVIEW (LUDO) SESSION
+                    CookieManager.getInstance().removeAllCookies(null);
+                    CookieManager.getInstance().flush();
+                    WebStorage.getInstance().deleteAllData();
 
                     if (user != null) {
                         pref.saveToken(login.getToken());
@@ -101,6 +111,7 @@ public class LoginActivity extends BaseActivity {
                         pref.saveProfileImage(user.getProfileImage());
                         pref.setLoggedIn(true);
                     }
+
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

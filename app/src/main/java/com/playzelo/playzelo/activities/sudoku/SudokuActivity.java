@@ -2,100 +2,165 @@ package com.playzelo.playzelo.activities.sudoku;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.playzelo.playzelo.LudoWebInterface;
-import com.playzelo.playzelo.activities.BaseActivity;
-import com.playzelo.playzelo.databinding.ActivityMinesGameBinding;
-import com.playzelo.playzelo.utils.SharedPrefManager;
+import androidx.annotation.Nullable;
 
-import java.util.Objects;
+import com.playzelo.playzelo.R;
+import com.playzelo.playzelo.activities.BaseActivity;
+import com.playzelo.playzelo.utils.SharedPrefManager;
 
 public class SudokuActivity extends BaseActivity {
 
-    private ActivityMinesGameBinding binding;
-    private String userId;
-    private String authToken;
-    private String username;
+    private WebView webView;
+    private String userId, authToken, username;
+    private boolean loginInjected = false;
+
+    private static final String SUDOKU_URL =
+            "https://playzelo.fun/sudoku/690db6aacd0cff473aed5f40";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMinesGameBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
 
-        // ================= GET USER DATA =================
-        SharedPrefManager pref = SharedPrefManager.getInstance(this);
-        userId = pref.getUserId();
-        authToken = pref.getToken();
-        username = pref.getUsername();
+        // ✅ FULL SCREEN GAME MODE
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        );
 
-        Log.d("SudokuGame", "userId=" + userId + " authToken=" + authToken + " username=" + username);
+        setContentView(R.layout.activity_sudoku);
 
-        // ================= WEBVIEW SETTINGS =================
-        WebSettings webSettings = binding.mineswebView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        webView = findViewById(R.id.sudokuWebView);
 
-        // ================= JS INTERFACE =================
-        binding.mineswebView.addJavascriptInterface(new LudoWebInterface(this), "AndroidApp");
+        fetchUserData();
+        setupWebView();
+        clearWebDataOnce();
+        injectLoginAndLoadGame();
+    }
 
-        binding.mineswebView.setWebViewClient(new WebViewClient() {
+    /* ================= USER DATA ================= */
+    private void fetchUserData() {
+        userId = getIntent().getStringExtra("userId");
+        authToken = getIntent().getStringExtra("authToken");
+        username = getIntent().getStringExtra("username");
 
+        if (authToken == null || authToken.isEmpty()) {
+            SharedPrefManager pref = SharedPrefManager.getInstance(this);
+            userId = pref.getUserId();
+            authToken = pref.getToken();
+            username = pref.getUsername();
+        }
+    }
+
+    /* ================= WEBVIEW SETUP ================= */
+    @SuppressLint("SetJavaScriptEnabled")
+    private void setupWebView() {
+        WebSettings s = webView.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        s.setMediaPlaybackRequiresUserGesture(false);
+
+        // ✅ GAME SCALING
+        s.setLoadWithOverviewMode(true);
+        s.setUseWideViewPort(true);
+        s.setSupportZoom(false);
+        s.setBuiltInZoomControls(false);
+        s.setDisplayZoomControls(false);
+
+        webView.setWebChromeClient(new WebChromeClient());
+
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                binding.progressBar.setVisibility(View.GONE);
+                super.onPageFinished(view, url);
 
-                // Sync user data to web
+                if (!loginInjected) {
+                    injectLogin();
+                    loginInjected = true;
+                }
+
+                // ✅ FORCE PERFECT GAME FIT
                 view.evaluateJavascript(
-                        "javascript:if(window.onAndroidData){" +
-                                "onAndroidData(JSON.parse(AndroidApp.getUserData()));" +
-                                "}",
+                        "(function(){" +
+                                "var meta=document.querySelector('meta[name=viewport]');" +
+                                "if(!meta){meta=document.createElement('meta');meta.name='viewport';document.head.appendChild(meta);}" +
+                                "meta.content='width=device-width,height=device-height,initial-scale=1.0,maximum-scale=1.0,user-scalable=no';" +
+                                "document.body.style.margin='0';" +
+                                "document.body.style.padding='0';" +
+                                "document.body.style.overflow='hidden';" +
+                                "})();",
                         null
                 );
-
-                super.onPageFinished(view, url);
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (Objects.equals(url, "https://playzelo.fun/") || Objects.equals(url, "https://playzelo.fun")) {
-                    return true;
-                }
-                view.loadUrl(url);
-                return true;
             }
         });
 
-        binding.mineswebView.setWebChromeClient(new WebChromeClient());
+        webView.addJavascriptInterface(new SudokuWebInterface(), "Android");
+    }
 
-        // ❌ Disable long press (no web feel)
-        binding.mineswebView.setOnLongClickListener(v -> true);
+    /* ================= LOGIN SYNC ================= */
+    private void injectLoginAndLoadGame() {
+        if (authToken == null || authToken.isEmpty()) return;
 
-        // ✅ Load game URL
-        binding.mineswebView.loadUrl(
-                "https://playzelo.fun/sudoku/690db6aacd0cff473aed5f40"
+        CookieManager cm = CookieManager.getInstance();
+        cm.setAcceptCookie(true);
+        cm.setAcceptThirdPartyCookies(webView, true);
+        cm.setCookie(".playzelo.fun", "token=" + authToken + "; path=/");
+        cm.flush();
+
+        webView.evaluateJavascript(
+                "localStorage.setItem('token','" + authToken + "');" +
+                        "localStorage.setItem('userId','" + userId + "');" +
+                        "localStorage.setItem('username','" + username + "');",
+                v -> webView.loadUrl(SUDOKU_URL)
         );
+    }
 
-        Log.d("SudokuGame", "Loading Sudoku Game");
+    private void injectLogin() {
+        webView.evaluateJavascript(
+                "localStorage.setItem('token','" + authToken + "');" +
+                        "localStorage.setItem('userId','" + userId + "');" +
+                        "localStorage.setItem('username','" + username + "');",
+                null
+        );
+    }
+
+    /* ================= CLEAR ================= */
+    private void clearWebDataOnce() {
+        webView.clearCache(true);
+        webView.clearHistory();
+        CookieManager.getInstance().removeAllCookies(null);
+        CookieManager.getInstance().flush();
+        webView.evaluateJavascript("localStorage.clear();", null);
+    }
+
+    /* ================= LOGOUT FROM WEB ================= */
+    class SudokuWebInterface {
+        @JavascriptInterface
+        public void logoutFromWeb() {
+            runOnUiThread(() -> {
+                SharedPrefManager.getInstance(SudokuActivity.this).logout();
+                clearWebDataOnce();
+                finish();
+            });
+        }
     }
 
     @Override
-    public void onBackPressed() {
-        if (binding.mineswebView.canGoBack()) {
-            binding.mineswebView.goBack();
-        } else {
-            super.onBackPressed();
-        }
+    protected void onDestroy() {
+        if (webView != null) webView.destroy();
+        super.onDestroy();
     }
 }
