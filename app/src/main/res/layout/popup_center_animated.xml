@@ -1,53 +1,6 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/centerPopupFrame"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/centerPopupLayout"
-        android:layout_width="320dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp"
-        android:background="@drawable/bg_center_popup_animated"
-        android:elevation="12dp"
-        android:gravity="center">
-
-        <ImageView
-            android:id="@+id/popupCenterIcon"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_trophy"/>
-
-        <TextView
-            android:id="@+id/popupCenterTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Khelo Jeeto!"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginTop="12dp"
-            android:gravity="center"/>
-
-        <TextView
-            android:id="@+id/popupCenterDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ramesh won ₹500 in Ludo!"
-            android:textColor="@android:color/white"
-            android:textSize="15sp"
-            android:layout_marginTop="8dp"
-            android:gravity="center"/>
-
-        <ImageView
-            android:id="@+id/popupCenterClose"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_close"
-            android:layout_gravity="end"
-            android:layout_marginTop="12dp"/>
-    </LinearLayout>
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
